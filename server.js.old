@@ -1,0 +1,105 @@
+/*
+  Telnet to:   telnet 127.0.0.1 1337
+  Copy/paste:  1203292316,0031698765432,GPRMC,211657.000,A,5213.0247,N,00516.7757,E,0.00,273.30,290312,,,A*62,F,imei:123456789012345,123
+*/
+
+var server = require('./lib/tk102');
+var konkerApi = require('./integration/konker/konkerPlataformApi');
+var konkerDataMongo = require('./integration/konker/data/KonkerDataMongo');
+
+// start server
+server.createServer({
+  port: 1337,
+  timeout: 6000
+});
+
+function analyzeData(data) {
+  switch (data.type) {
+    case 'CONNECT':
+      return 'LOAD'
+      break;
+    case 'DATA':
+
+      //Konker send data
+      res=konkerDataMongo.getDeviceCredentialsByUuidPromise()
+      if (res.length != 0) {
+        let dataToKonker = Object.assign({}, data);
+        konkerApi.sendDataPromise(res.apiKey, res.password, dataToKonker)
+        .then(result => {
+          //console.log(result);
+        });
+
+        //Get data from Konker fom 1 second ago
+        konkerApi.getGetDataPromise(res.apiKey, res.password, dataToKonker.imei+"?offset="+(Date.now()-1000))
+        .then(result => {
+
+            if(result=="" || result=="[]" || result==undefined){
+              return ""
+            }
+            if(result.data=="[]" || result.data==undefined){
+              return ""
+            }
+            if(result.data[0]=="[]" || result.data[0]==undefined){
+              return ""
+            }
+            if(result.data[0].data=="[]" || result.data[0].data==undefined){
+              return ""
+            }
+            if(result.data[0].data.command=="[]" || result.data[0].data.command==undefined || result.data[0].data.command==""){
+              return ""
+            }
+          
+
+            console.log("Command from platform : " + result.data[0].data.command);
+            return result.data[0].data.command
+          
+        });
+      }
+     
+
+
+        return ""
+
+      break;
+    default:
+      return "ON"
+  }
+}
+
+// report only track event to console
+server.on('track', function (data) {
+  console.log('\nIncoming GPS track data:\n');
+  console.dir(data);
+  server.write(analyzeData(data))
+})
+
+server.on('data', function (raw) {
+  console.log('\nIncoming raw data:\n');
+  console.log(raw);
+});
+
+// wait for server to be ready
+server.on('listening', function (lst) {
+  console.log('Tracker bridge server is ready\n');
+});
+
+server.on('connection', function (socket) {
+  console.log('Connection from ' + socket.remoteAddress);
+
+});
+
+server.on('disconnect', function (socket) {
+  console.log('Disconnected device ' + socket.remoteAddress);
+});
+
+server.on('timeout', function (socket) {
+  console.log('Time-out from ' + socket.remoteAddress);
+});
+
+server.on('fail', function (err) {
+  console.log(err);
+});
+
+server.on('error', function (err) {
+  console.log(err);
+});

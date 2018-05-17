@@ -1,0 +1,44 @@
+{
+  "name": "konker-tracker-bridge",
+  "version": "1.0.0",
+  "description": "Bridge for GPS tracker to Konker platform ",
+  "dependencies": {
+    "axios": "0.17.1",
+    "dotenv": "4.0.0",
+    "mqtt": "^2.15.1",
+    "public-ip": "^2.4.0",
+    "tk10x-parser": "1.0.3",
+    "winston": "2.4.0"
+  },
+  "devDependencies": {
+    "coveralls": "^2.12.0",
+    "dotest": "^2.0.0",
+    "eslint": "^3.18.0",
+    "istanbul": "^0.4.5"
+  },
+  "main": "server.js",
+  "scripts": {
+    "start": "node serverLogger.js",
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KonkerLabs/konker-tracker-bridge.git"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "keywords": [
+    "konker",
+    "tracker",
+    "bridge",
+    "gps"
+  ],
+  "author": "Erico Netto",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/KonkerLabs/konker-tracker-bridge/issues"
+  },
+  "homepage": "https://github.com/KonkerLabs/konker-tracker-bridge#readme"
+}
