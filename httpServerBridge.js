@@ -17,6 +17,11 @@ class bridge {
     var bridgePort= this._bridgePort;
     var remoteServerIp= this._remoteServerIp;
     var remoteServerPort= this._remoteServerPort;
+    var onRemoteConnected=this.onRemoteConnected; 
+    var onRemoteData=this.onRemoteData; 
+    var onConnectionClose=this.onConnectionClose; 
+    var onTarguetData=this.onTarguetData; 
+    var onDisconnection=this.onDisconnection; 
 
 
     this._bridgeServer = net.createServer(function(trackerClient) { 
@@ -24,33 +29,33 @@ class bridge {
       //connection to REMOTE SERVER
       serverClient.connect(remoteServerPort, remoteServerIp, function() {
         console.log('Connected to server ' + remoteServerIp);
-        this.onRemoteConnected();
+        onRemoteConnected();
       });
      
       //ON REMOTE SERVER Sendig data to TARGUET
       serverClient.on('data', function(data) {
         console.log(remoteServerIp + '->tracker: ' + data);
         trackerClient.write(data.toString());
-        this.onRemoteData();
+        onRemoteData();
       });
       
       //ON CONNECTION CLOSED
       serverClient.on('close', function() {
         console.log('Connection closed');
-        this.onConnectionClose();
+        onConnectionClose();
       });
       
       //TARGUET sendig data to REMOTE SERVER
       trackerClient.on('data', function(data) {
         console.log('tracker->' + remoteServerIp + ': ' + data);
         serverClient.write(data.toString());
-        this.onTarguetData();
+        onTarguetData();
       });
     
       //DISCONNECTION
       trackerClient.on('end', function() {
         console.log('Server disconnected');
-        this.onDisconnection();
+        onDisconnection();
       });
     
     });
