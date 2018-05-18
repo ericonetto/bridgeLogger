@@ -22,7 +22,7 @@ class bridge {
     this._bridgeServer = net.createServer(function(trackerClient) { 
       var serverClient = new net.Socket();
       //connection to REMOTE SERVER
-      this.serverClient.connect(remoteServerPort, remoteServerIp, function() {
+      serverClient.connect(remoteServerPort, remoteServerIp, function() {
         console.log('Connected to server ' + remoteServerIp);
         this.onRemoteConnected();
       });
