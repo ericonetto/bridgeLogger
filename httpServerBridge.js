@@ -1,6 +1,12 @@
 var net = require('net');
 var publicIp = require('public-ip');
 "use strict";
+
+
+//DEFINITIONS
+//TARGUET -> DEVICE THAT WILL BE CONNECTING TO THIS BRIDGE
+//REMOTE SERVER -> THE RMOTE SERVER THAT THIS BRIDGE WILL RELLAY ALL MESSAGES FROM AND TO
+
 class bridge {
   
   constructor(remoteServerIp, remoteServerPort, bridgePort) {
@@ -24,7 +30,7 @@ class bridge {
     var onDisconnection=this.onDisconnection; 
 
 
-    this._bridgeServer = net.createServer(function(trackerClient) { 
+    this._bridgeServer = net.createServer(function(targuetClient) { 
       var serverClient = new net.Socket();
       //connection to REMOTE SERVER
       serverClient.connect(remoteServerPort, remoteServerIp, function() {
@@ -34,8 +40,8 @@ class bridge {
      
       //ON REMOTE SERVER Sendig data to TARGUET
       serverClient.on('data', function(data) {
-        console.log(remoteServerIp + '->tracker: ' + data);
-        trackerClient.write(data.toString());
+        console.log("FROM "+ remoteServerIp + '->targuet: ' + data);
+        targuetClient.write(data.toString());
         onRemoteData();
       });
       
@@ -46,14 +52,14 @@ class bridge {
       });
       
       //TARGUET sendig data to REMOTE SERVER
-      trackerClient.on('data', function(data) {
-        console.log('tracker->' + remoteServerIp + ': ' + data);
+      targuetClient.on('data', function(data) {
+        console.log('FROM targuet->' + remoteServerIp + ': ' + data);
         serverClient.write(data.toString());
         onTarguetData();
       });
     
       //DISCONNECTION
-      trackerClient.on('end', function() {
+      targuetClient.on('end', function() {
         console.log('Server disconnected');
         onDisconnection();
       });
