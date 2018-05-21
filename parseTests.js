@@ -6,7 +6,7 @@ var binaryParser =require('./binaryParser');
 
 dotenv.load();
 
-var remoteServerIp="192.168.1.1";
+var remoteServerIp="177.168.1.1";
 var remoteServerPort=30000;
 var bridgePort=30001;
 
@@ -36,16 +36,13 @@ bridgeServer.start();
 bridgeServer.on("targuetData",(data)=>{
 
   var msgmap={
-    protocol:{
-      protocol:1
-    },
+    header:{header:2},
     format:{
-      header:2,
       protocol:1,
       packetLenght:2,
       serialNumber:2
     },
-    protocols:{
+    content:{
       "01":{
         terminalId:8,
         treminalLanguage:1,
@@ -93,79 +90,84 @@ bridgeServer.on("targuetData",(data)=>{
 
   var lastPosition=0;
   var protocol="";
+  var packetLenght=data.length;
 
 
-  var msgFormat= new binaryParser(msgmap.format,data.slice(lastPosition,data.length));
-
-  console.log("header:" + msgFormat.header.toString('hex'));
-  console.log("protocol:" + msgFormat.protocol.toString('hex'));
-  console.log("packetLenght:" + msgFormat.packetLenght.toString('hex'));
-  console.log("serialNumber:" + msgFormat.serialNumber.toString('hex'));
-  lastPosition=msgFormat.lastPosition;
   while(lastPosition<data.length){
-    var nextProtocol= new binaryParser(msgmap.protocol,data.slice(lastPosition,data.length));
+    var msgHeader= new binaryParser(msgmap.header,data.slice(lastPosition,data.length));
+    console.log("header:" + msgHeader.header.toString('hex'));
+    lastPosition=msgHeader.lastPosition;
+  
+    while(lastPosition<packetLenght){
+      var msgFormat= new binaryParser(msgmap.format,data.slice(lastPosition,data.length));
+      var packetLenght=parseInt(msgFormat.packetLenght.toString('hex'),10)
+      console.log("protocol:" +  msgFormat.protocol.toString('hex'));
+      console.log("packetLenght:" + packetLenght);
+      console.log("serialNumber:" + msgFormat.serialNumber.toString('hex'));
     
-    lastPosition=lastPosition+nextProtocol.lastPosition;
-    protocol=nextProtocol.protocol.toString('hex');
-    switch(protocol){
-      case "01":
-        //Login data packet
-        var loginData= new binaryParser(msgmap.protocols[protocol],data.slice(lastPosition,data.length));
-        console.log("loginData.terminalId: " + loginData.terminalId.toString('hex'));
-        console.log("loginData.treminalLanguage: " + loginData.treminalLanguage.toString('hex'));
-        console.log("loginData.timezone: " + loginData.timezone.toString('hex'));
-        lastPosition=lastPosition+loginData.lastPosition;
-        break;
-      case "02":
-        //GPS data packet
-        var gpsData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
-        console.log("gpsData.dateTime: " + gpsData.dateTime.toString('hex'));
-        console.log("gpsData.latitude: " + gpsData.latitude.toString('hex'));
-        console.log("gpsData.logitude: " + gpsData.logitude).toString('hex');
-        lastPosition=lastPosition+gpsData.lastPosition;
-        break;
-      case "03":
-        //HEARTBEAT data packet
-        var heartbeatData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
-        console.log("heartbeatData.status: " + heartbeatData.status.toString('hex'));
-        lastPosition=lastPosition+heartbeatData.lastPosition;
-        break;
-      case "04":
-        //ALARM data packet
-        var alarmData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
-        lastPosition=lastPosition+alarmData.lastPosition;
-        break;
-      case "05":
-        //TERMINAL data packet
-        var terminalData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
-        lastPosition=lastPosition+terminalData.lastPosition;
-        break;
-      case "06":
-        //SMS commands upload data packet
-        break;
-      case "07":
-        //OBD data packet
-        break;
-      case "09":
-        //OBD fault codes data packet
-        break;
-      case "80":
-        //SMS commands/interactive message downlink data packet
-        break;
-      case "81":
-        //Ordinary data packet
-        break;
-      case "0e":
-        //Photo information data packet
-        break;
-      case "0f":
-        //Photo content data packet
-        break;
-      default:
-      lastPosition=data.length;
+      lastPosition=lastPosition+msgFormat.lastPosition;
+      protocol=msgFormat.protocol.toString('hex');
+    
+      var msgContent= new binaryParser(msgmap.content[protocol],data.slice(lastPosition,data.length));
+    
+      switch(protocol){
+        case "01":
+          //Login data packet
+          console.log("loginData.terminalId: " + msgContent.terminalId.toString('hex'));
+          console.log("loginData.treminalLanguage: " + msgContent.treminalLanguage.toString('hex'));
+          console.log("loginData.timezone: " + msgContent.timezone.toString('hex'));
+          
+          break;
+        case "02":
+          //GPS data packet
+          console.log("gpsData.dateTime: " + msgContent.dateTime.toString('hex'));
+          console.log("gpsData.latitude: " + msgContent.latitude.toString('hex'));
+          console.log("gpsData.logitude: " + msgContent.logitude).toString('hex');
+    
+          break;
+        case "03":
+          //HEARTBEAT data packet
+          console.log("heartbeatData.status: " + msgContent.status.toString('hex'));
+    
+          break;
+        case "04":
+          //ALARM data packet
+    
+          break;
+        case "05":
+          //TERMINAL data packet
+          break;
+        case "06":
+          //SMS commands upload data packet
+          break;
+        case "07":
+          //OBD data packet
+          break;
+        case "09":
+          //OBD fault codes data packet
+          break;
+        case "80":
+          //SMS commands/interactive message downlink data packet
+          break;
+        case "81":
+          //Ordinary data packet
+          break;
+        case "0e":
+          //Photo information data packet
+          break;
+        case "0f":
+          //Photo content data packet
+          break;
+        default:
+          lastPosition=data.length;
+      }
+    
+      lastPosition=lastPosition+msgContent.lastPosition; 
     }
-
+    lastPosition=lastPosition+1;
   }
+
+
 
 
 })
