@@ -60,65 +60,104 @@ bridgeServer.on("targuetData",(data)=>{
         signalStrenght:2,
         analogInput1:2,
         analogInput2:2
+      },
+      "03":{
+        status:2
+      },
+      "04":{
+        dateTime:4,
+        latitude:4,
+        longitude:4,
+        speed:1,
+        course:2,
+        baseStation:9,
+        positionStatus:1,
+        alarmType:1
+      },
+      "05":{
+        dateTime:4,
+        latitude:4,
+        longitude:4,
+        speed:1,
+        course:2,
+        baseStation:9,
+        positionStatus:1,
+        statusType:1,
       }
     }
   }
 
-  var msgFormat= new binaryParser(msgmap.format,data);
+  var lastPosition=0;
+  var protocol="";
 
-  console.log("header:" + msgFormat.header.toString('hex'));
-  console.log("protocol:" + msgFormat.protocol.toString('hex'));
-  console.log("packetLenght:" + msgFormat.packetLenght.toString('hex'));
-  console.log("serialNumber:" + msgFormat.serialNumber.toString('hex'));
+  while(lastPosition<data.length){
+    var msgFormat= new binaryParser(msgmap.format,data.slice(lastPosition,data.length));
 
-  var protocol=msgFormat.protocol.toString('hex');
-  switch(msgFormat.protocol.toString('hex')){
-    case "01":
-      //Login data packet
-      var loginData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
-      console.log("loginData.terminalId: " + loginData.terminalId.toString('hex'));
-      console.log("loginData.treminalLanguage: " + loginData.treminalLanguage.toString('hex'));
-      console.log("loginData.timezone: " + loginData.timezone.toString('hex'));
-      break;
-    case "02":
-      //GPS data packet
-      var gpsData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
-      console.log("gpsData.dateTime: " + gpsData.dateTime.toString('hex'));
-      console.log("gpsData.latitude: " + gpsData.latitude.toString('hex'));
-      console.log("gpsData.logitude: " + gpsData.logitude).toString('hex');
+    console.log("header:" + msgFormat.header.toString('hex'));
+    console.log("protocol:" + msgFormat.protocol.toString('hex'));
+    console.log("packetLenght:" + msgFormat.packetLenght.toString('hex'));
+    console.log("serialNumber:" + msgFormat.serialNumber.toString('hex'));
+  
+    lastPosition=msgFormat.lastPosition;
+    protocol=msgFormat.protocol.toString('hex');
+    switch(msgFormat.protocol.toString('hex')){
+      case "01":
+        //Login data packet
+        var loginData= new binaryParser(msgmap.protocols[protocol],data.slice(lastPosition,data.length));
+        console.log("loginData.terminalId: " + loginData.terminalId.toString('hex'));
+        console.log("loginData.treminalLanguage: " + loginData.treminalLanguage.toString('hex'));
+        console.log("loginData.timezone: " + loginData.timezone.toString('hex'));
+        lastPosition=loginData.lastPosition;
+        break;
+      case "02":
+        //GPS data packet
+        var gpsData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
+        console.log("gpsData.dateTime: " + gpsData.dateTime.toString('hex'));
+        console.log("gpsData.latitude: " + gpsData.latitude.toString('hex'));
+        console.log("gpsData.logitude: " + gpsData.logitude).toString('hex');
+        lastPosition=gpsData.lastPosition;
+        break;
+      case "03":
+        //HEARTBEAT data packet
+        var heartbeatData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
+        console.log("heartbeatData.status: " + heartbeatData.status.toString('hex'));
+        lastPosition=heartbeatData.lastPosition;
+        break;
+      case "04":
+        //ALARM data packet
+        var alarmData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
+        lastPosition=alarmData.lastPosition;
+        break;
+      case "05":
+        //TERMINAL data packet
+        var terminalData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
+        lastPosition=terminalData.lastPosition;
+        break;
+      case "06":
+        //SMS commands upload data packet
+        break;
+      case "07":
+        //OBD data packet
+        break;
+      case "09":
+        //OBD fault codes data packet
+        break;
+      case "80":
+        //SMS commands/interactive message downlink data packet
+        break;
+      case "81":
+        //Ordinary data packet
+        break;
+      case "0e":
+        //Photo information data packet
+        break;
+      case "0f":
+        //Photo content data packet
+        break;
+    }
 
-      break;
-    case "03":
-      //HEARTBEAT data packet
-      break;
-    case "04":
-      //ALARM data packet
-      break;
-    case "05":
-      //TERMINAL data packet
-      break;
-    case "06":
-      //SMS commands upload data packet
-      break;
-    case "07":
-      //OBD data packet
-      break;
-    case "09":
-      //OBD fault codes data packet
-      break;
-    case "80":
-      //SMS commands/interactive message downlink data packet
-      break;
-    case "81":
-      //Ordinary data packet
-      break;
-    case "0e":
-      //Photo information data packet
-      break;
-    case "0f":
-      //Photo content data packet
-      break;
   }
+
 
 })
 
