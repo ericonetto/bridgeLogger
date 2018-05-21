@@ -66,26 +66,26 @@ bridgeServer.on("targuetData",(data)=>{
 
   var msgFormat= new binaryParser(msgmap.format,data);
 
-  console.log("header:" + msgFormat.header);
-  console.log("protocol:" + msgFormat.protocol);
-  console.log("packetLenght:" + msgFormat.packetLenght);
-  console.log("serialNumber:" + msgFormat.serialNumber);
+  console.log("header:" + msgFormat.header.toString('hex'));
+  console.log("protocol:" + msgFormat.protocol.toString('hex'));
+  console.log("packetLenght:" + msgFormat.packetLenght.toString('hex'));
+  console.log("serialNumber:" + msgFormat.serialNumber.toString('hex'));
 
   var protocol=msgFormat.protocol;
-  switch(msgFormat.protocol){
+  switch(msgFormat.protocol.toString('hex')){
     case "01":
       //Login data packet
       var loginData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
-      console.log("loginData.terminalId: " + loginData.terminalId);
-      console.log("loginData.treminalLanguage: " + loginData.treminalLanguage);
-      console.log("loginData.timezone: " + loginData.timezone);
+      console.log("loginData.terminalId: " + loginData.terminalId.toString('hex'));
+      console.log("loginData.treminalLanguage: " + loginData.treminalLanguage.toString('hex'));
+      console.log("loginData.timezone: " + loginData.timezone.toString('hex'));
       break;
     case "02":
       //GPS data packet
       var gpsData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
-      console.log("gpsData.dateTime: " + gpsData.dateTime);
-      console.log("gpsData.latitude: " + gpsData.latitude);
-      console.log("gpsData.logitude: " + gpsData.logitude);
+      console.log("gpsData.dateTime: " + gpsData.dateTime.toString('hex'));
+      console.log("gpsData.latitude: " + gpsData.latitude.toString('hex'));
+      console.log("gpsData.logitude: " + gpsData.logitude).toString('hex');
 
       break;
     case "03":
