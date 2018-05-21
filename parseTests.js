@@ -123,7 +123,15 @@ bridgeServer.on("targuetData",(data)=>{
           console.log("gpsData.dateTime: " + msgContent.dateTime.toString('hex'));
           console.log("gpsData.latitude: " + msgContent.latitude.toString('hex'));
           console.log("gpsData.logitude: " + msgContent.logitude.toString('hex'));
-    
+          console.log("gpsData.speed: " + msgContent.speed.toString('hex'));
+          console.log("gpsData.course: " + msgContent.course.toString('hex'));
+          console.log("gpsData.base: " + msgContent.base.toString('hex'));
+          console.log("gpsData.positionStatus: " + msgContent.positionStatus.toString('hex'));
+          console.log("gpsData.deviceStatus: " + msgContent.deviceStatus.toString('hex'));
+          console.log("gpsData.batteryVolts: " + msgContent.batteryVolts.toString('hex'));
+          console.log("gpsData.signalStrenght: " + msgContent.signalStrenght.toString('hex'));
+          console.log("gpsData.analogInput1: " + msgContent.analogInput1.toString('hex'));
+          console.log("gpsData.analogInput2: " + msgContent.analogInput2.toString('hex'));
           break;
         case "03":
           //HEARTBEAT data packet
@@ -161,8 +169,10 @@ bridgeServer.on("targuetData",(data)=>{
         default:
           lastPosition=data.length;
       }
-    
+      console.log("current lastPosition: " + lastPosition);
+      console.log("msgContent.lastPosition: " + msgContent.lastPosition);
       lastPosition=lastPosition+msgContent.lastPosition; 
+      console.log("lastPosition+msgContent.lastPosition: " + lastPosition);
     }
     lastPosition=lastPosition+1;
   }
