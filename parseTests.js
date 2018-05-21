@@ -7,9 +7,7 @@ var binaryParser =require('./binaryParser');
 dotenv.load();
 
 
-var remoteServerIp = '187.113.142.90';
-var remoteServerPort=30001;
-var bridgePort= 30002;
+
 //PARAMETERS
 var command="";
 if (process.argv.length>2 ) command=process.argv[2];
