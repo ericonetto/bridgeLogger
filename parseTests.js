@@ -71,7 +71,7 @@ bridgeServer.on("targuetData",(data)=>{
   console.log("packetLenght:" + msgFormat.packetLenght.toString('hex'));
   console.log("serialNumber:" + msgFormat.serialNumber.toString('hex'));
 
-  var protocol=msgFormat.protocol;
+  var protocol=msgFormat.protocol.toString('hex');
   switch(msgFormat.protocol.toString('hex')){
     case "01":
       //Login data packet
