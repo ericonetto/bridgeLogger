@@ -122,7 +122,7 @@ bridgeServer.on("targuetData",(data)=>{
           //GPS data packet
           console.log("gpsData.dateTime: " + msgContent.dateTime.toString('hex'));
           console.log("gpsData.latitude: " + msgContent.latitude.toString('hex'));
-          console.log("gpsData.logitude: " + msgContent.logitude).toString('hex');
+          console.log("gpsData.logitude: " + msgContent.logitude.toString('hex'));
     
           break;
         case "03":
