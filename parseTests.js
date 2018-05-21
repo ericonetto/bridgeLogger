@@ -107,7 +107,7 @@ bridgeServer.on("targuetData",(data)=>{
     
     lastPosition=lastPosition+nextProtocol.lastPosition;
     protocol=nextProtocol.protocol.toString('hex');
-    switch(msgFormat.protocol.toString('hex')){
+    switch(protocol){
       case "01":
         //Login data packet
         var loginData= new binaryParser(msgmap.protocols[protocol],data.slice(lastPosition,data.length));
