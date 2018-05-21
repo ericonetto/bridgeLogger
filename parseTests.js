@@ -13,7 +13,7 @@ var bridgePort= 30002;
 //PARAMETERS
 var command="";
 if (process.argv.length>2 ) command=process.argv[2];
-if (command=="-params"){
+if (command=="-configs"){
   if (process.argv.length!=6 ) return;
   remoteServerIp=process.argv[3];
   remoteServerPort=process.argv[4];
