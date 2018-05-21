@@ -27,7 +27,7 @@ if (command=="-params"){
 /////////////////
 
 
-var bridgeServer = new bridge(remoteServerIp,remoteServerPort,bridgePort,true);
+var bridgeServer = new bridge(remoteServerIp,remoteServerPort,bridgePort,false);
 
 bridgeServer.start();
 
