@@ -19,7 +19,11 @@ if (command=="-parse"){
   remoteServerPort=process.argv[4];
   bridgeport=process.argv[5];
   console.log("Parameters passed-> remoteServer: " + remoteServerIp + ", remoteServerPort: " + remoteServerPort + ", bridgeport: " +bridgeport);
+  var bridgeServer = new bridge(remoteServerIp,remoteServerPort,bridgePort,true);
+
+  bridgeServer.start();
   process.argv=[];
+
   
 }
 
@@ -27,9 +31,7 @@ if (command=="-parse"){
 /////////////////
 
 
-var bridgeServer = new bridge(remoteServerIp,remoteServerPort,bridgePort,true);
 
-bridgeServer.start();
 
 
 bridgeServer.on("targuetData",(data)=>{
