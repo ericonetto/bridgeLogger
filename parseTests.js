@@ -6,10 +6,21 @@ var bridge =require('../bridge/httpServerBridge');
 dotenv.load();
 
 
-var remoteServerIp = '34.196.183.170';
-var remoteServerPort=7210;
-
-var bridgePort= 7211;
+var remoteServer = 'notset';
+var remoteServerPort=0;
+var bridgePort= 0;
+//PARAMETERS
+var command="";
+if (process.argv.length>2 ) command=process.argv[2];
+if (command=="-params"){
+  if (process.argv.length!=6 ) return;
+  remoteServer=process.argv[3];
+  remoteServerPort=process.argv[4];
+  bridgeport=process.argv[5];
+  console.log("Parameters passed-> remoteServer: " + remoteServer + ", remoteServerPort: " + remoteServerPort + ", bridgeport: " +bridgeport);
+  process.argv=[];
+  
+}
 
 
 /////////////////
