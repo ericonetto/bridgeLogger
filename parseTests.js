@@ -13,9 +13,9 @@ var command="";
 if (process.argv.length>2 ) command=process.argv[2];
 if (command=="-parse"){
   if (process.argv.length!=6 ) return;
-  remoteServerIp=process.argv[3];
-  remoteServerPort=process.argv[4];
-  bridgeport=process.argv[5];
+  var remoteServerIp=process.argv[3];
+  var remoteServerPort=process.argv[4];
+  var bridgeport=process.argv[5];
   console.log("Parameters passed-> remoteServer: " + remoteServerIp + ", remoteServerPort: " + remoteServerPort + ", bridgeport: " +bridgeport);
   var bridgeServer = new bridge(remoteServerIp,remoteServerPort,bridgePort,true);
 
