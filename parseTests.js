@@ -1,7 +1,7 @@
 var net = require('net');
 var publicIp = require('public-ip');
 var dotenv = require('dotenv');
-var bridge =require('./bridge/httpServerBridge');
+var bridge =require('./lib/bridge/httpServerBridge');
 
 dotenv.load();
 
