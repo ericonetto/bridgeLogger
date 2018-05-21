@@ -35,7 +35,7 @@ bridgeServer.onRemoteConnected((gpsDevice,remoteServer)=>{
 
   //when data arrives from GPS
   bridgeServer.onTarguetData((data)=>{
-
+    print("data.slice(0,2)=" + data.slice(0,2));
   })
 
   //when data arrives from remote server
