@@ -6,22 +6,21 @@ var binaryParser =require('./binaryParser');
 
 dotenv.load();
 
-
+var remoteServerIp="192.168.1.1";
+var remoteServerPort=30000;
+var bridgePort=30001;
 
 //PARAMETERS
 var command="";
 if (process.argv.length>2 ) command=process.argv[2];
 if (command=="-parse"){
   if (process.argv.length!=6 ) return;
-  var remoteServerIp=process.argv[3];
-  var remoteServerPort=process.argv[4];
-  var bridgePort=process.argv[5];
+  remoteServerIp=process.argv[3];
+  remoteServerPort=process.argv[4];
+  bridgePort=process.argv[5];
   console.log("Parameters passed-> remoteServer: " + remoteServerIp + ", remoteServerPort: " + remoteServerPort + ", bridgeport: " +bridgePort);
-  var bridgeServer = new bridge(remoteServerIp,remoteServerPort,bridgePort,true);
 
-  bridgeServer.start();
   process.argv=[];
-
   
 }
 
@@ -29,12 +28,17 @@ if (command=="-parse"){
 /////////////////
 
 
+var bridgeServer = new bridge(remoteServerIp,remoteServerPort,bridgePort,true);
 
+bridgeServer.start();
 
 
 bridgeServer.on("targuetData",(data)=>{
 
   var msgmap={
+    protocol:{
+      protocol:1
+    },
     format:{
       header:2,
       protocol:1,
@@ -90,16 +94,19 @@ bridgeServer.on("targuetData",(data)=>{
   var lastPosition=0;
   var protocol="";
 
-  while(lastPosition<data.length){
-    var msgFormat= new binaryParser(msgmap.format,data.slice(lastPosition,data.length));
 
-    console.log("header:" + msgFormat.header.toString('hex'));
-    console.log("protocol:" + msgFormat.protocol.toString('hex'));
-    console.log("packetLenght:" + msgFormat.packetLenght.toString('hex'));
-    console.log("serialNumber:" + msgFormat.serialNumber.toString('hex'));
-  
-    lastPosition=msgFormat.lastPosition;
-    protocol=msgFormat.protocol.toString('hex');
+  var msgFormat= new binaryParser(msgmap.format,data.slice(lastPosition,data.length));
+
+  console.log("header:" + msgFormat.header.toString('hex'));
+  console.log("protocol:" + msgFormat.protocol.toString('hex'));
+  console.log("packetLenght:" + msgFormat.packetLenght.toString('hex'));
+  console.log("serialNumber:" + msgFormat.serialNumber.toString('hex'));
+  lastPosition=msgFormat.lastPosition;
+  while(lastPosition<data.length){
+    var nextProtocol= new binaryParser(msgmap.protocol,data.slice(lastPosition,data.length));
+    
+    lastPosition=lastPosition+nextProtocol.lastPosition;
+    protocol=nextProtocol.protocol.toString('hex');
     switch(msgFormat.protocol.toString('hex')){
       case "01":
         //Login data packet
@@ -107,7 +114,7 @@ bridgeServer.on("targuetData",(data)=>{
         console.log("loginData.terminalId: " + loginData.terminalId.toString('hex'));
         console.log("loginData.treminalLanguage: " + loginData.treminalLanguage.toString('hex'));
         console.log("loginData.timezone: " + loginData.timezone.toString('hex'));
-        lastPosition=loginData.lastPosition;
+        lastPosition=lastPosition+loginData.lastPosition;
         break;
       case "02":
         //GPS data packet
@@ -115,23 +122,23 @@ bridgeServer.on("targuetData",(data)=>{
         console.log("gpsData.dateTime: " + gpsData.dateTime.toString('hex'));
         console.log("gpsData.latitude: " + gpsData.latitude.toString('hex'));
         console.log("gpsData.logitude: " + gpsData.logitude).toString('hex');
-        lastPosition=gpsData.lastPosition;
+        lastPosition=lastPosition+gpsData.lastPosition;
         break;
       case "03":
         //HEARTBEAT data packet
         var heartbeatData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
         console.log("heartbeatData.status: " + heartbeatData.status.toString('hex'));
-        lastPosition=heartbeatData.lastPosition;
+        lastPosition=lastPosition+heartbeatData.lastPosition;
         break;
       case "04":
         //ALARM data packet
         var alarmData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
-        lastPosition=alarmData.lastPosition;
+        lastPosition=lastPosition+alarmData.lastPosition;
         break;
       case "05":
         //TERMINAL data packet
         var terminalData= new binaryParser(msgmap.protocols[protocol],data.slice(msgFormat.lastPosition,data.length));
-        lastPosition=terminalData.lastPosition;
+        lastPosition=lastPosition+terminalData.lastPosition;
         break;
       case "06":
         //SMS commands upload data packet
