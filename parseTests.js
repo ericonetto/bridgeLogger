@@ -154,6 +154,8 @@ bridgeServer.on("targuetData",(data)=>{
       case "0f":
         //Photo content data packet
         break;
+      default:
+      lastPosition=data.length;
     }
 
   }
