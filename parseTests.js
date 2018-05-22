@@ -71,6 +71,13 @@ bridgeServer.on("targuetData",(data)=>{
               speed: 2,
               course: 2,
               satellites: 1
+            },
+            bit1:{
+              mcc:2,
+              mnc:2,
+              lac: 2,
+              cid: 4,
+              rxlev: 1
             }
           }
         },
@@ -103,7 +110,7 @@ bridgeServer.on("targuetData",(data)=>{
   
     var formatLastPosition=msgFormat.lastPosition;
     var pid=msgFormat.pid.toString('hex');
-  
+    mcc
     var pidMap=msgmap.content[pid];
     
     
@@ -122,7 +129,7 @@ bridgeServer.on("targuetData",(data)=>{
       if( locationHead.mask.toString('hex')=="03"){
         console.log("location data");
         var locationDataMap=msgmap.content["12"].location.masks.bit0;
-        var locationData= new binaryParser(locationDataMap, data.slice(locationHead.lastPosition+1,data.length));
+        var locationData= new binaryParser(locationDataMap, data.slice(locationHead.lastPosition,data.length));
         console.log("locationData.latitude:" +  locationData.latitude.toString('hex'));
         console.log("locationData.longitude:" +  locationData.longitude.toString('hex'));
         console.log("locationData.altitude:" +  locationData.altitude.toString('hex'));
@@ -130,7 +137,6 @@ bridgeServer.on("targuetData",(data)=>{
         console.log("locationData.course:" +  locationData.course.toString('hex'));
         console.log("locationData.satellites:" +  locationData.satellites.toString('hex'));
       }
-
 
     }else{
       lastPosition=data.length;
