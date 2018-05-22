@@ -107,13 +107,13 @@ bridgeServer.on("targuetData",(data)=>{
     var pidMap=msgmap.content[pid];
     
     
-    if(pidMap!=undefined && pidMap!="12"){
+    if(pidMap!=undefined && pid!="12"){
       var msgContent= new binaryParser(pidMap,data.slice(formatLastPosition,data.length));
   
       for (var key in pidMap) {
-        console.log(protocol +"-" + key + ": " + msgContent[key].toString('hex'));
+        console.log(pid +"-" + key + ": " + msgContent[key].toString('hex'));
       }
-    }else if(pidMap=="12"){
+    }else if(pid=="12"){
       var locationFormatMap=msgmap.content["12"].location.format;
       var locationHead= new binaryParser(locationFormatMap,data.slice(formatLastPosition,data.length));
       console.log("locationHead.time:" +  locationHead.time.toString('hex'));
