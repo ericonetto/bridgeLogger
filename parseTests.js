@@ -36,8 +36,8 @@ bridgeServer.start();
 bridgeServer.on("targuetData",(data)=>{
 
   var msgmap={
-    header:{header:2},
     format:{
+      header:2,
       protocol:1,
       packetLenght:2,
       serialNumber:2
@@ -88,27 +88,20 @@ bridgeServer.on("targuetData",(data)=>{
     }
   }
 
-  var lastPosition=0;
-  var protocol="";
-  var packetLenght=data.length;
-
-
+  var lastPosition=-1;
   while(lastPosition<data.length){
-    var msgHeader= new binaryParser(msgmap.header,data.slice(lastPosition,data.length));
-    console.log("header:" + msgHeader.header.toString('hex'));
-    lastPosition=msgHeader.lastPosition;
-  
-    while(lastPosition<packetLenght){
-      var msgFormat= new binaryParser(msgmap.format,data.slice(lastPosition,data.length));
-      var packetLenght=parseInt(msgFormat.packetLenght.toString('hex'),10)
+      var msgFormat= new binaryParser(msgmap.format,data.slice(lastPosition+1,data.length));
+
+      var packetLenght=parseInt(msgFormat.packetLenght.toString('hex'),16);
+      console.log("header:" + msgFormat.header.toString('hex'));
       console.log("protocol:" +  msgFormat.protocol.toString('hex'));
       console.log("packetLenght:" + packetLenght);
       console.log("serialNumber:" + msgFormat.serialNumber.toString('hex'));
     
-      lastPosition=lastPosition+msgFormat.lastPosition;
-      protocol=msgFormat.protocol.toString('hex');
+      var formatLastPosition=msgFormat.lastPosition;
+      var protocol=msgFormat.protocol.toString('hex');
     
-      var msgContent= new binaryParser(msgmap.content[protocol],data.slice(lastPosition,data.length));
+      var msgContent= new binaryParser(msgmap.content[protocol],data.slice(formatLastPosition,data.length));
     
       switch(protocol){
         case "01":
@@ -169,12 +162,8 @@ bridgeServer.on("targuetData",(data)=>{
         default:
           lastPosition=data.length;
       }
-      console.log("current lastPosition: " + lastPosition);
-      console.log("msgContent.lastPosition: " + msgContent.lastPosition);
-      lastPosition=lastPosition+msgContent.lastPosition; 
-      console.log("lastPosition+msgContent.lastPosition: " + lastPosition);
-    }
-    lastPosition=lastPosition+1;
+    
+    lastPosition=packetLenght+(formatLastPosition-msgmap.format.serialNumber);
   }
 
 
