@@ -164,6 +164,11 @@ bridgeServer.on("targuetData",(data)=>{
       }
     
     lastPosition=packetLenght+(formatLastPosition-msgmap.format.serialNumber);
+    console.log("packetLenght: " + packetLenght);
+    console.log("formatLastPosition: " + formatLastPosition);
+    console.log("msgmap.format.serialNumber: " + msgmap.format.serialNumber);
+    console.log("packetLenght+(formatLastPosition-msgmap.format.serialNumber): " + lastPosition);
+    console.log("");
   }
 
 
