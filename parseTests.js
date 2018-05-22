@@ -84,85 +84,45 @@ bridgeServer.on("targuetData",(data)=>{
         baseStation:9,
         positionStatus:1,
         statusType:1,
+      },
+      "12":{
+        battery:2,
+        adc:4,
+        odometer:4,
+        gspGsmCounter:4,
+        steps:4,
+        sensor:12
       }
     }
   }
 
   var lastPosition=0;
   while(lastPosition<data.length){
-      var msgFormat= new binaryParser(msgmap.format,data.slice(lastPosition,data.length));
+    var msgFormat= new binaryParser(msgmap.format,data.slice(lastPosition,data.length));
 
-      var packetLenght=parseInt(msgFormat.packetLenght.toString('hex'),16);
-      console.log("header:" + msgFormat.header.toString('hex'));
-      console.log("protocol:" +  msgFormat.protocol.toString('hex'));
-      console.log("packetLenght:" + packetLenght);
-      console.log("serialNumber:" + msgFormat.serialNumber.toString('hex'));
+    var packetLenght=parseInt(msgFormat.packetLenght.toString('hex'),16);
+    console.log("header:" + msgFormat.header.toString('hex'));
+    console.log("protocol:" +  msgFormat.protocol.toString('hex'));
+    console.log("packetLenght:" + packetLenght);
+    console.log("serialNumber:" + msgFormat.serialNumber.toString('hex'));
+  
+    var formatLastPosition=msgFormat.lastPosition;
+    var protocol=msgFormat.protocol.toString('hex');
+  
+    var protocolMap=msgmap.content[protocol];
     
-      var formatLastPosition=msgFormat.lastPosition;
-      var protocol=msgFormat.protocol.toString('hex');
     
-      var msgContent= new binaryParser(msgmap.content[protocol],data.slice(formatLastPosition,data.length));
-    
-      switch(protocol){
-        case "01":
-          //Login data packet
-          console.log("loginData.terminalId: " + msgContent.terminalId.toString('hex'));
-          console.log("loginData.treminalLanguage: " + msgContent.treminalLanguage.toString('hex'));
-          console.log("loginData.timezone: " + msgContent.timezone.toString('hex'));
-          
-          break;
-        case "02":
-          //GPS data packet
-          console.log("gpsData.dateTime: " + msgContent.dateTime.toString('hex'));
-          console.log("gpsData.latitude: " + msgContent.latitude.toString('hex'));
-          console.log("gpsData.logitude: " + msgContent.logitude.toString('hex'));
-          console.log("gpsData.speed: " + msgContent.speed.toString('hex'));
-          console.log("gpsData.course: " + msgContent.course.toString('hex'));
-          console.log("gpsData.base: " + msgContent.base.toString('hex'));
-          console.log("gpsData.positionStatus: " + msgContent.positionStatus.toString('hex'));
-          console.log("gpsData.deviceStatus: " + msgContent.deviceStatus.toString('hex'));
-          console.log("gpsData.batteryVolts: " + msgContent.batteryVolts.toString('hex'));
-          console.log("gpsData.signalStrenght: " + msgContent.signalStrenght.toString('hex'));
-          console.log("gpsData.analogInput1: " + msgContent.analogInput1.toString('hex'));
-          console.log("gpsData.analogInput2: " + msgContent.analogInput2.toString('hex'));
-          break;
-        case "03":
-          //HEARTBEAT data packet
-          console.log("heartbeatData.status: " + msgContent.status.toString('hex'));
-    
-          break;
-        case "04":
-          //ALARM data packet
-    
-          break;
-        case "05":
-          //TERMINAL data packet
-          break;
-        case "06":
-          //SMS commands upload data packet
-          break;
-        case "07":
-          //OBD data packet
-          break;
-        case "09":
-          //OBD fault codes data packet
-          break;
-        case "80":
-          //SMS commands/interactive message downlink data packet
-          break;
-        case "81":
-          //Ordinary data packet
-          break;
-        case "0e":
-          //Photo information data packet
-          break;
-        case "0f":
-          //Photo content data packet
-          break;
-        default:
-          lastPosition=data.length;
+    if(protocolMap!=undefined){
+      var msgContent= new binaryParser(protocolMap,data.slice(formatLastPosition,data.length));
+  
+      for (var key in protocolMap) {
+        console.log(protocol +"-" + key + ": " + msgContent[key].toString('hex'));
       }
-    
+    }else{
+      lastPosition=data.length;
+    }
+
+
     lastPosition=lastPosition+packetLenght+(formatLastPosition-msgmap.format.serialNumber);
     console.log("");
   }
