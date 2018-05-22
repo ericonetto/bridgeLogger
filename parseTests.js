@@ -86,12 +86,12 @@ bridgeServer.on("targuetData",(data)=>{
         statusType:1,
       },
       "12":{
-        battery:2,
-        adc:4,
-        odometer:4,
-        gspGsmCounter:4,
-        steps:4,
-        sensor:12
+        battery:Uint16Array.BYTES_PER_ELEMENT,
+        adc:2*Uint16Array.BYTES_PER_ELEMENT,
+        odometer:Uint8Array.BYTES_PER_ELEMENT,
+        gspGsmCounter:2*Uint16Array.BYTES_PER_ELEMENT,
+        steps:2*Uint16Array.BYTES_PER_ELEMENT,
+        sensor:2*Uint16Array.BYTES_PER_ELEMENT+2*Uint8Array.BYTES_PER_ELEMENT
       }
     }
   }
