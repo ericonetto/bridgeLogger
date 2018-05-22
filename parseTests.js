@@ -163,7 +163,7 @@ bridgeServer.on("targuetData",(data)=>{
           lastPosition=data.length;
       }
     
-    lastPosition=packetLenght+(formatLastPosition-msgmap.format.serialNumber);
+    lastPosition=lastPosition+packetLenght+(formatLastPosition-msgmap.format.serialNumber);
     console.log("packetLenght: " + packetLenght);
     console.log("formatLastPosition: " + formatLastPosition);
     console.log("msgmap.format.serialNumber: " + msgmap.format.serialNumber);
