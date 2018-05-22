@@ -110,7 +110,6 @@ bridgeServer.on("targuetData",(data)=>{
   
     var formatLastPosition=msgFormat.lastPosition;
     var pid=msgFormat.pid.toString('hex');
-    mcc
     var pidMap=msgmap.content[pid];
     
     
