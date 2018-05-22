@@ -125,10 +125,11 @@ bridgeServer.on("targuetData",(data)=>{
       console.log("locationHead.time:" +  locationHead.time.toString('hex'));
       console.log("locationHead.mask:" +  locationHead.mask.toString('hex'));
 
+      
       if( locationHead.mask.toString('hex')=="03"){
         console.log("location data");
         var locationDataMap=msgmap.content["12"].location.masks.bit0;
-        var locationData= new binaryParser(locationDataMap, data.slice(locationHead.lastPosition,data.length));
+        var locationData= new binaryParser(locationDataMap, data.slice(formatLastPosition + locationHead.lastPosition,data.length));
         console.log("locationData.latitude:" +  locationData.latitude.toString('hex'));
         console.log("locationData.longitude:" +  locationData.longitude.toString('hex'));
         console.log("locationData.altitude:" +  locationData.altitude.toString('hex'));
