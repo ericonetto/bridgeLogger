@@ -37,61 +37,56 @@ bridgeServer.on("targuetData",(data)=>{
 
   var msgmap={
     format:{
-      header:2,
-      protocol:1,
-      packetLenght:2,
-      serialNumber:2
+      mark:2,
+      pid:1,
+      size:2,
+      sequence:2
     },
     content:{
       "01":{
-        terminalId:8,
-        treminalLanguage:1,
+        imei:8,
+        language:1,
         timezone:1,
-      },
-      "02":{
-        dateTime:4,
-        latitude:4,
-        logitude:4,
-        speed:1,
-        course:2,
-        base:9,
-        positionStatus:1,
-        deviceStatus:2,
-        batteryVolts:2,
-        signalStrenght:2,
-        analogInput1:2,
-        analogInput2:2
+        sysver:2,
+        appver:2,
+        psver:2,
+        psosize:2,
+        pscsize:2,
+        pssum16:2
       },
       "03":{
         status:2
       },
-      "04":{
-        dateTime:4,
-        latitude:4,
-        longitude:4,
-        speed:1,
-        course:2,
-        baseStation:9,
-        positionStatus:1,
-        alarmType:1
-      },
-      "05":{
-        dateTime:4,
-        latitude:4,
-        longitude:4,
-        speed:1,
-        course:2,
-        baseStation:9,
-        positionStatus:1,
-        statusType:1,
-      },
       "12":{
-        battery:Uint16Array.BYTES_PER_ELEMENT,
-        adc:2*Uint16Array.BYTES_PER_ELEMENT,
-        odometer:Uint8Array.BYTES_PER_ELEMENT,
-        gspGsmCounter:2*Uint16Array.BYTES_PER_ELEMENT,
-        steps:2*Uint16Array.BYTES_PER_ELEMENT,
-        sensor:2*Uint16Array.BYTES_PER_ELEMENT+2*Uint8Array.BYTES_PER_ELEMENT
+        location:{
+          format:{
+            time:4,
+            mask:1
+          },
+          masks:{
+            bit0:{
+              latitude:4,
+              longitude:4,
+              altitude: 2,
+              speed: 2,
+              course: 2,
+              satellites: 1
+            }
+          }
+        },
+        status:2,
+        battery:2,
+        ain0:2,
+        ain1:2,
+        mileage:4,
+        gsmcntr:2,
+        gpscntr:2,
+        pdmstep:2,
+        pdmtime:2,
+        temperature:2,
+        humidity:2,
+        illuminance:4,
+        co2:4
       }
     }
   }
@@ -100,30 +95,48 @@ bridgeServer.on("targuetData",(data)=>{
   while(lastPosition<data.length){
     var msgFormat= new binaryParser(msgmap.format,data.slice(lastPosition,data.length));
 
-    var packetLenght=parseInt(msgFormat.packetLenght.toString('hex'),16);
-    console.log("header:" + msgFormat.header.toString('hex'));
-    console.log("protocol:" +  msgFormat.protocol.toString('hex'));
-    console.log("packetLenght:" + packetLenght);
-    console.log("serialNumber:" + msgFormat.serialNumber.toString('hex'));
+    var packetSize=parseInt(msgFormat.size.toString('hex'),16);
+    console.log("mark:" + msgFormat.mark.toString('hex'));
+    console.log("pid:" +  msgFormat.pid.toString('hex'));
+    console.log("size:" + packetSize);
+    console.log("sequence:" + msgFormat.sequence.toString('hex'));
   
     var formatLastPosition=msgFormat.lastPosition;
-    var protocol=msgFormat.protocol.toString('hex');
+    var pid=msgFormat.pid.toString('hex');
   
-    var protocolMap=msgmap.content[protocol];
+    var pidMap=msgmap.content[pid];
     
     
-    if(protocolMap!=undefined){
-      var msgContent= new binaryParser(protocolMap,data.slice(formatLastPosition,data.length));
+    if(pidMap!=undefined && pidMap!="12"){
+      var msgContent= new binaryParser(pidMap,data.slice(formatLastPosition,data.length));
   
-      for (var key in protocolMap) {
+      for (var key in pidMap) {
         console.log(protocol +"-" + key + ": " + msgContent[key].toString('hex'));
       }
+    }else if(pidMap=="12"){
+      var locationFormatMap=msgmap.content["12"].location.format;
+      var locationHead= new binaryParser(locationFormatMap,data.slice(formatLastPosition,data.length));
+      console.log("locationHead.time:" +  locationHead.time.toString('hex'));
+      console.log("locationHead.mask:" +  locationHead.mask.toString('hex'));
+
+      if(0x80 & locationHead.mask){
+        var locationDataMap=msgmap.content["12"].location.masks.bit0;
+        var locationData= new binaryParser(locationDataMap, data.slice(locationHead.lastPosition,data.length));
+        console.log("locationData.latitude:" +  locationData.latitude.toString('hex'));
+        console.log("locationData.longitude:" +  locationData.longitude.toString('hex'));
+        console.log("locationData.altitude:" +  locationData.altitude.toString('hex'));
+        console.log("locationData.speed:" +  locationData.speed.toString('hex'));
+        console.log("locationData.course:" +  locationData.course.toString('hex'));
+        console.log("locationData.satellites:" +  locationData.satellites.toString('hex'));
+      }
+
+
     }else{
       lastPosition=data.length;
     }
 
 
-    lastPosition=lastPosition+packetLenght+(formatLastPosition-msgmap.format.serialNumber);
+    lastPosition=lastPosition+packetSize+(formatLastPosition-msgmap.format.sequence);
     console.log("");
   }
 
