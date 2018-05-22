@@ -88,9 +88,9 @@ bridgeServer.on("targuetData",(data)=>{
     }
   }
 
-  var lastPosition=-1;
+  var lastPosition=0;
   while(lastPosition<data.length){
-      var msgFormat= new binaryParser(msgmap.format,data.slice(lastPosition+1,data.length));
+      var msgFormat= new binaryParser(msgmap.format,data.slice(lastPosition,data.length));
 
       var packetLenght=parseInt(msgFormat.packetLenght.toString('hex'),16);
       console.log("header:" + msgFormat.header.toString('hex'));
