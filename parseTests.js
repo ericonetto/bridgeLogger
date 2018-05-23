@@ -126,10 +126,7 @@ bridgeServer.on("targuetData",(data)=>{
   
     var pid=msgFormat.pid.toString('hex');
     var pidMap=msgmap.content[pid];
-
-
-    console.log("msgFormat.lastPosition: " + msgFormat.lastPosition);
-    
+   
     
     if(pidMap!=undefined && pid!="12"){
       var msgContent= new binaryParser(pidMap,data,msgFormat.lastPosition);
