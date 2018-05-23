@@ -37,6 +37,15 @@ konker.on("subcribed",()=>{
     bridgeServer.start();
 });
 
+function signedHexStrToInt(hexString){
+  if(hexString[0]=="f"){
+      return -(~parseInt(hexString, 16)+1);
+  }else{
+      return parseInt(hexString, 16)
+  }
+}
+
+
 bridgeServer.on("targuetData",(data)=>{
   var jsonValues = eelinkParser(data);
   var jsonToTransmit = {}
