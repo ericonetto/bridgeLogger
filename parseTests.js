@@ -110,6 +110,8 @@ bridgeServer.on("targuetData",(data)=>{
   
     var pid=msgFormat.pid.toString('hex');
     var pidMap=msgmap.content[pid];
+
+    console.log("msgFormat.lastPosition: " + msgFormat.lastPosition);
     
     
     if(pidMap!=undefined && pid!="12"){
@@ -140,9 +142,9 @@ bridgeServer.on("targuetData",(data)=>{
     }else{
       lastPosition=data.length;
     }
+    
 
-
-    lastPosition=packetSize+(msgFormat.lastPosition-msgmap.format.sequence);
+   startPosition=packetSize+(msgFormat.lastPosition-msgmap.format.sequence);
     console.log("");
   }
 
