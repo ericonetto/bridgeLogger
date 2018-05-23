@@ -6,6 +6,7 @@ var binaryParserClass = class bparser  {
     }
     
     this.bitmapJson=bitmapJson;
+    this.data=data
 
     var startPos=start;
     for (var key in this.bitmapJson) {
