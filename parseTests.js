@@ -49,17 +49,20 @@ function signedHexStrToInt(hexString){
 bridgeServer.on("targuetData",(data)=>{
   var jsonValues = eelinkParser(data);
   var jsonToTransmit = {}
-  jsonToTransmit._ts = parseInt("0x" + jsonValues.time);
-  jsonToTransmit._lat = signedHexStrToInt(jsonValues.latitude)/1800000;
-  jsonToTransmit._lon = signedHexStrToInt(jsonValues.longitude)/1800000;
-  jsonToTransmit.altitude = parseInt(jsonValues.altitude, 16);
-  jsonToTransmit.speed = parseInt(jsonValues.speed, 16);
-  jsonToTransmit.course = parseInt(jsonValues.course, 16);
-  jsonToTransmit.satellites = parseInt(jsonValues.satellites);
-  jsonToTransmit.battery = parseInt(jsonValues.battery, 16)/1000;
-  jsonToTransmit.temperature = parseInt(jsonValues.temperature, 16)/256;
+  if(jsonValues.pid=="12"){
+    jsonToTransmit._ts = parseInt("0x" + jsonValues.time);
+    jsonToTransmit._lat = signedHexStrToInt(jsonValues.latitude)/1800000;
+    jsonToTransmit._lon = signedHexStrToInt(jsonValues.longitude)/1800000;
+    jsonToTransmit.altitude = parseInt(jsonValues.altitude, 16);
+    jsonToTransmit.speed = parseInt(jsonValues.speed, 16);
+    jsonToTransmit.course = parseInt(jsonValues.course, 16);
+    jsonToTransmit.satellites = parseInt(jsonValues.satellites);
+    jsonToTransmit.battery = parseInt(jsonValues.battery, 16)/1000;
+    jsonToTransmit.temperature = parseInt(jsonValues.temperature, 16)/256;
+  
+    konker.publishToKonker(jsonToTransmit,"data")
+  }
 
-  konker.publishToKonker(jsonToTransmit,"data")
 });
 
 
