@@ -2,16 +2,25 @@ var net = require('net');
 var publicIp = require('public-ip');
 var dotenv = require('dotenv');
 var bridge =require('./lib/bridge/httpServerBridge');
-var eelinkParser =require('./parserEelink');
+var eelinkParser =require('./lib/parserEelink');
 var konkerConn =require('./konker/konkerConn');
 
 
 dotenv.load();
 
-var remoteServerIp="177.168.1.1";
-var remoteServerPort=30000;
-var bridgePort=30001;
-
+var remoteServerIp = process.env.REMOTE_SERVER_IP;
+var remoteServerPort = process.env.REMOTE_SERVER_PORT;
+var bridgePort = process.env.BRIDGE_PORT;
+var mqttURL = process.env.CLOUDAMQP_MQTT_URL
+var deviceUserName = process.env.KONKER_API_KEY;
+var devicePassword = process.env.KONKER_API_PASS;
+console.log("Bridge parameters passed->");
+console.log("remoteServerIp: " + remoteServerIp);
+console.log("remoteServerPort: " + remoteServerPort);
+console.log("mqttURL: " + mqttURL);
+console.log("deviceUserName: " + deviceUserName);
+console.log("devicePassword: " + devicePassword);
+/*
 //PARAMETERS
 var command="";
 if (process.argv.length>2 ) command=process.argv[2];
@@ -25,10 +34,10 @@ if (command=="-parse"){
   process.argv=[];
   
 }
-
+*/
 /////////////////
 var bridgeServer = new bridge(remoteServerIp,remoteServerPort,bridgePort,true);
-var konker = new konkerConn("mqtt://mqtt.demo.konkerlabs.net:1883","8r29lu88tme4","3DFB98IJyA84");
+var konker = new konkerConn(mqttURL, deviceUserName, devicePassword);
 
 
 konker.start();

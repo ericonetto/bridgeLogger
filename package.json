@@ -1,6 +1,6 @@
 {
   "name": "konker-tracker-bridge",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Bridge for GPS tracker to Konker platform ",
   "dependencies": {
     "axios": "0.17.1",
@@ -18,8 +18,7 @@
   },
   "main": "server.js",
   "scripts": {
-    "start": "node serverLogger.js",
-    "test": "node test.js"
+    "start": "node main.js"
   },
   "repository": {
     "type": "git",

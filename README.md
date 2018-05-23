@@ -21,12 +21,12 @@ nano .env
 Create the .env file with your Konker configurations
 
 ```sh
-KONKER_API_HOST="http://data.demo.konkerlabs.net:80"
-KONKER_API_DATA="http://data.demo.konkerlabs.net:80"
-KONKER_USER="user@email.com"
-KONKER_PASS="password"
-KONKER_API_KEY="device_username"
-KONKER_API_PASS="device_password"
+REMOTE_SERVER_IP = remote_gps_server
+REMOTE_SERVER_PORT = remote_gps_server_port
+BRIDGE_PORT = this_server_port
+CLOUDAMQP_MQTT_URL = mqtt://mqtt.demo.konkerlabs.net:1883
+KONKER_API_KEY = device_key
+KONKER_API_PASS = device_pass
 ```
 
 ## Run
@@ -34,8 +34,3 @@ KONKER_API_PASS="device_password"
 ```sh
 npm start
 ```
-
-## Examples
-
-See [test.js](test.js)
-This test will simulate a tracker
