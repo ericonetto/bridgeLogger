@@ -14,14 +14,14 @@ function signedHexStrToInt(hexString){
 
 var d
 d="676712004300265b049d7403fd788323fafda8e50309000000000002d4000355fb00000eb43a007b16d505dd000000000000758e758802c40199000000000000000000000000011a";
-d="676712004200175b05b0570e02d4000355fb0000512e3e55fb000050fd3b55fb00000eb438067a170105fa0000000000007a107a0a02d001a1000000000000000000000000016a";
+d="6767120042001d5b05c5550e02d4000355fb0000512e3755fb00000eb43255fb000050fd2f067a170106030000000000007a677a6102d001a10000000000000000000000000146";
 
 var data=new Buffer(d,'hex');
 
 var jsonValues = eelinkParser(data);
 
 console.log("jsonValues");
-console.log(jsonValues);
+console.log(JSON.stringify(jsonValues));
 console.log("");
 
 
@@ -56,4 +56,4 @@ if(jsonValues.temperature!=undefined){
 }
 
 
-console.log(jsonToTransmit)
+console.log(JSON.stringify(jsonToTransmit))
