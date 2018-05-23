@@ -98,9 +98,9 @@ bridgeServer.on("targuetData",(data)=>{
     }
   }
 
-  var lastPosition=0;
-  while(lastPosition<data.length){
-    var msgFormat= new binaryParser(msgmap.format,data.slice(lastPosition,data.length));
+  var startPosition=0;
+  while(startPosition<data.length){
+    var msgFormat= new binaryParser(msgmap.format,data,startPosition);
 
     var packetSize=parseInt(msgFormat.size.toString('hex'),16);
     console.log("mark:" + msgFormat.mark.toString('hex'));
@@ -108,28 +108,26 @@ bridgeServer.on("targuetData",(data)=>{
     console.log("size:" + packetSize);
     console.log("sequence:" + msgFormat.sequence.toString('hex'));
   
-    var formatLastPosition=msgFormat.lastPosition;
     var pid=msgFormat.pid.toString('hex');
     var pidMap=msgmap.content[pid];
     
     
     if(pidMap!=undefined && pid!="12"){
-      var msgContent= new binaryParser(pidMap,data.slice(formatLastPosition,data.length));
+      var msgContent= new binaryParser(pidMap,data,msgFormat.lastPosition);
   
       for (var key in pidMap) {
         console.log(pid +"-" + key + ": " + msgContent[key].toString('hex'));
       }
     }else if(pid=="12"){
       var locationFormatMap=msgmap.content["12"].location.format;
-      var locationHead= new binaryParser(locationFormatMap,data.slice(formatLastPosition,data.length));
+      var locationHead= new binaryParser(locationFormatMap,data, msgContent.lastPosition);
       console.log("locationHead.time:" +  locationHead.time.toString('hex'));
       console.log("locationHead.mask:" +  locationHead.mask.toString('hex'));
 
       
-      if( locationHead.mask.toString('hex')=="03"){
-        console.log("location data");
+      if(locationHead.mask.toString(2)[0]=="1"){
         var locationDataMap=msgmap.content["12"].location.masks.bit0;
-        var locationData= new binaryParser(locationDataMap, data.slice(formatLastPosition + locationHead.lastPosition,data.length));
+        var locationData= new binaryParser(locationDataMap, data,locationHead.lastPosition);
         console.log("locationData.latitude:" +  locationData.latitude.toString('hex'));
         console.log("locationData.longitude:" +  locationData.longitude.toString('hex'));
         console.log("locationData.altitude:" +  locationData.altitude.toString('hex'));
@@ -137,13 +135,14 @@ bridgeServer.on("targuetData",(data)=>{
         console.log("locationData.course:" +  locationData.course.toString('hex'));
         console.log("locationData.satellites:" +  locationData.satellites.toString('hex'));
       }
+      
 
     }else{
       lastPosition=data.length;
     }
 
 
-    lastPosition=lastPosition+packetSize+(formatLastPosition-msgmap.format.sequence);
+    lastPosition=packetSize+(msgFormat.lastPosition-msgmap.format.sequence);
     console.log("");
   }
 
