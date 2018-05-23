@@ -10,9 +10,11 @@ var binaryParserClass = class bparser  {
 
     var startPos=start;
     for (var key in this.bitmapJson) {
-      this[key]= this.data.slice(startPos,startPos+this.bitmapJson[key])
-      startPos=startPos+ this.bitmapJson[key];
-      this.lastPosition=startPos;
+      if(Object.keys(this.bitmapJson[key]).length==0){
+        this[key]= this.data.slice(startPos,startPos+this.bitmapJson[key])
+        startPos=startPos+ this.bitmapJson[key];
+        this.lastPosition=startPos;
+      }
     }
   }
 }

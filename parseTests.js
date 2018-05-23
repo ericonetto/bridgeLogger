@@ -36,12 +36,10 @@ bridgeServer.start();
 bridgeServer.on("targuetData",(data)=>{
 
   var msgmap={
-    format:{
-      mark:2,
-      pid:1,
-      size:2,
-      sequence:2
-    },
+    mark:2,
+    pid:1,
+    size:2,
+    sequence:2,
     content:{
       "01":{
         imei:8,
@@ -59,10 +57,8 @@ bridgeServer.on("targuetData",(data)=>{
       },
       "12":{
         location:{
-          format:{
-            time:4,
-            mask:1
-          },
+          time:4,
+          mask:1,
           masks:{
             bit0:{
               latitude:4,
@@ -90,21 +86,19 @@ bridgeServer.on("targuetData",(data)=>{
             }
           }
         },
-        extra:{
-          status:2,
-          battery:2,
-          ain0:2,
-          ain1:2,
-          mileage:4,
-          gsmcntr:2,
-          gpscntr:2,
-          pdmstep:2,
-          pdmtime:2,
-          temperature:2,
-          humidity:2,
-          illuminance:4,
-          co2:4
-        }
+        status:2,
+        battery:2,
+        ain0:2,
+        ain1:2,
+        mileage:4,
+        gsmcntr:2,
+        gpscntr:2,
+        pdmstep:2,
+        pdmtime:2,
+        temperature:2,
+        humidity:2,
+        illuminance:4,
+        co2:4        
       }
     }
   }
@@ -116,7 +110,7 @@ bridgeServer.on("targuetData",(data)=>{
 
   var startPosition=0;
   while(startPosition<data.length){
-    var msgFormat= new binaryParser(msgmap.format,data,startPosition);
+    var msgFormat= new binaryParser(msgmap,data,startPosition);
 
     var packetSize=parseInt(msgFormat.size.toString('hex'),16);
     console.log("mark: " + msgFormat.mark.toString('hex'));
@@ -132,10 +126,12 @@ bridgeServer.on("targuetData",(data)=>{
       var msgContent= new binaryParser(pidMap,data,msgFormat.lastPosition);
   
       for (var key in pidMap) {
-        console.log(pid +"-" + key + ": " + msgContent[key].toString('hex'));
+        if(Object.keys(msgContent[key]).length==0){
+          console.log(pid +"-" + key + ": " + msgContent[key].toString('hex'));
+        }
       }
     }else if(pid=="12"){
-      var locationFormatMap=msgmap.content["12"].location.format;
+      var locationFormatMap=msgmap.content["12"].location;
       var locationHead= new binaryParser(locationFormatMap,data, msgFormat.lastPosition);
       console.log("locationHead.time: " +  locationHead.time.toString('hex'));
       console.log("locationHead.mask: " +  locationHead.mask.toString('hex'));
@@ -145,34 +141,44 @@ bridgeServer.on("targuetData",(data)=>{
         var locationDataMap=msgmap.content["12"].location.masks.bit0;
         var locationData= new binaryParser(locationDataMap, data,locationHead.lastPosition);
         for (var key in locationDataMap) {
-          console.log("locationData." + key + ": " + locationData[key].toString('hex'));
+          if(locationData[key]!=undefined){
+            console.log("locationData." + key + ": " + locationData[key].toString('hex'));
+          }
         }
       }
       if(mask[1]=="1"){
         var locationDataMap=msgmap.content["12"].location.masks.bit1;
         var locationData= new binaryParser(locationDataMap, data,locationData.lastPosition);
         for (var key in locationDataMap) {
-          console.log("locationData." + key + ": " + locationData[key].toString('hex'));
+          if(locationData[key]!=undefined){
+            console.log("locationData." + key + ": " + locationData[key].toString('hex'));
+          }
         }
       }
       if(mask[2]=="1" || mask[3]=="1"){
         var locationDataMap=msgmap.content["12"].location.masks.bit2;
         var locationData= new binaryParser(locationDataMap, data,locationData.lastPosition);
         for (var key in locationDataMap) {
-          console.log("locationData." + key + ": " + locationData[key].toString('hex'));
+          if(locationData[key]!=undefined){
+            console.log("locationData." + key + ": " + locationData[key].toString('hex'));
+          }
         }
       }
       if(mask[4]=="1" || mask[5]=="1" || mask[6]=="1"){
         var locationDataMap=msgmap.content["12"].location.masks.bit4;
         var locationData= new binaryParser(locationDataMap, data,locationData.lastPosition);
         for (var key in locationDataMap) {
-          console.log("locationData." + key + ": " + locationData[key].toString('hex'));
+          if(locationData[key]!=undefined){
+            console.log("locationData." + key + ": " + locationData[key].toString('hex'));
+          }
         }
       }
-      var locationDataMap=msgmap.content["12"].extra;
+      var locationDataMap=msgmap.content["12"];
       var locationData= new binaryParser(locationDataMap, data,locationData.lastPosition);
       for (var key in locationDataMap) {
-        console.log("locationData." + key + ": " + locationData[key].toString('hex'));
+        if(locationData[key]!=undefined){
+          console.log("locationData." + key + ": " + locationData[key].toString('hex'));
+        }
       }
 
     }else{
@@ -180,7 +186,7 @@ bridgeServer.on("targuetData",(data)=>{
     }
     
 
-   startPosition=packetSize+(msgFormat.lastPosition-msgmap.format.sequence);
+   startPosition=packetSize+(msgFormat.lastPosition-msgmap.sequence);
     console.log("");
   }
 
