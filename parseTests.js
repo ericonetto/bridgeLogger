@@ -122,7 +122,7 @@ bridgeServer.on("targuetData",(data)=>{
       }
     }else if(pid=="12"){
       var locationFormatMap=msgmap.content["12"].location.format;
-      var locationHead= new binaryParser(locationFormatMap,data, msgContent.lastPosition);
+      var locationHead= new binaryParser(locationFormatMap,data, msgFormat.lastPosition);
       console.log("locationHead.time:" +  locationHead.time.toString('hex'));
       console.log("locationHead.mask:" +  locationHead.mask.toString('hex'));
 
