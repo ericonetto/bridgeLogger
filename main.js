@@ -2,7 +2,7 @@ var net = require('net');
 var publicIp = require('public-ip');
 var dotenv = require('dotenv');
 var bridge =require('./lib/bridge/httpServerBridge');
-var eelinkParser =require('./lib/parserEelink');
+var eelinkParser =require('./lib/protocols/parserEelink');
 var konkerConn =require('./konker/konkerConn');
 
 
