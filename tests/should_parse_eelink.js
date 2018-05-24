@@ -14,7 +14,7 @@ function signedHexStrToInt(hexString){
 
 var d
 d="676712004300265b049d7403fd788323fafda8e50309000000000002d4000355fb00000eb43a007b16d505dd000000000000758e758802c40199000000000000000000000000011a";
-d="6767120042001d5b05c5550e02d4000355fb0000512e3755fb00000eb43255fb000050fd2f067a170106030000000000007a677a6102d001a10000000000000000000000000146";
+d="676712004300145b06bbf103fd7881a2fafdaa4902f0000000000002d4000355fb00000eb42c007b170005e50000000000007aa97aa302d701a700000000000000000000000001cc";
 
 var data=new Buffer(d,'hex');
 
@@ -53,6 +53,12 @@ if(jsonValues.battery!=undefined){
 }
 if(jsonValues.temperature!=undefined){
     jsonToTransmit.temperature = parseInt(jsonValues.temperature, 16)/256;
+}
+if(jsonValues.ain0!=undefined){
+    jsonToTransmit.ain0 = parseInt(jsonValues.ain0, 16);
+}
+if(jsonValues.ain1!=undefined){
+    jsonToTransmit.ain1 = parseInt(jsonValues.ain1, 16);
 }
 
 
