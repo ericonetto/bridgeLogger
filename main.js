@@ -70,6 +70,8 @@ bridgeServer.on("targuetData",(data)=>{
     if(jsonValues.temperature!=undefined){jsonToTransmit.temperature = parseInt(jsonValues.temperature, 16)/256;}
     if(jsonValues.ain0!=undefined){jsonToTransmit.ain0 = parseInt(jsonValues.ain0, 16);}
     if(jsonValues.ain1!=undefined){jsonToTransmit.ain1 = parseInt(jsonValues.ain1, 16);}
+    //NOT DOCUMENTED IN PROTOCOL
+      if(jsonValues.tempnodoc!=undefined){jsonToTransmit.tempnodoc = parseInt(jsonValues.tempnodoc, 16)/16;}
     konker.publishToKonker(jsonToTransmit,"data")
   }
 

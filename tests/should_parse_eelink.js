@@ -69,7 +69,7 @@ if(jsonValues.ain1!=undefined){
 
 //NOT DOCUMENTED IN PROTOCOL
 if(jsonValues.tempnodoc!=undefined){
-    jsonToTransmit.tempnodoc = parseInt(jsonValues.tempnodoc, 16)/256;
+    jsonToTransmit.tempnodoc = parseInt(jsonValues.tempnodoc, 16)/16;
 }
 
 
