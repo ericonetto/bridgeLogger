@@ -70,6 +70,36 @@ bridgeServer.on("targuetData",(data)=>{
     if(jsonValues.temperature!=undefined){jsonToTransmit.temperature = parseInt(jsonValues.temperature, 16)/256;}
     if(jsonValues.ain0!=undefined){jsonToTransmit.ain0 = parseInt(jsonValues.ain0, 16);}
     if(jsonValues.ain1!=undefined){jsonToTransmit.ain1 = parseInt(jsonValues.ain1, 16);}
+
+    if(jsonValues.status!=undefined){
+      var mask="00000000" + parseInt("0x" + jsonValues.status.toString('hex'),16).toString(2);
+      function maskBit(b){
+          return mask.charAt(mask.length-(1+b))==1;
+      }
+  
+      status={
+        gpsfixed:maskBit(0),
+        cardsgnd:maskBit(1),
+        enginfired:maskBit(2),
+        accelersup:maskBit(3),
+        motionwarn:maskBit(4),
+        rlycontrol:maskBit(5),
+        rlytrigg:maskBit(6),
+        extchrsup:maskBit(7),
+        charging:maskBit(8),
+        active:maskBit(9),
+        gpsrunning:maskBit(10),
+        obdrunning:maskBit(11),
+        din0:maskBit(12),
+        din1:maskBit(13),
+        din2:maskBit(14),
+        din3:maskBit(15)
+      }
+      jsonToTransmit.status=status;
+    }
+  
+
+
     //NOT DOCUMENTED IN PROTOCOL
       if(jsonValues.tempnodoc!=undefined){jsonToTransmit.tempnodoc = parseInt(jsonValues.tempnodoc, 16)/16;}
     konker.publishToKonker(jsonToTransmit,"data")

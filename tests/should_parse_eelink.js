@@ -17,11 +17,14 @@ var d
 d="676712004301c85b06e79703fd788192fafdac2502d5000300000302d4000355fb0000512e2c067b170105e50000000000007b607b5a02d701a7000000000000000000000000fce0"
 d="676712004301895b06e1f903fd788192fafdac2502d5000000000002d4000355fb0000512e2d007b170105760000000000007b487b4202d701a7000000000000000000000000fce0";
 
+
+
+
 //Mengagem com sensor de temperatura 25.3°C => 25.3 * 256 => 6476.8 => 0x194c
 d="676712004301c05b06e6ca03fd788192fafdac2502d5000000000002d4000355fb0000512e36007b164e05d50000000000007b5d7b5702d701a70000000000000000000000000194";
 //Mengagem com sensor de temperatura 25.2°C => 25.2 * 256 => 6451 => 0x1933
 d="676712004301cd5b06e7f103fd78853dfafdb118039e000000000502d4000355fb0000512e3b067b16f605dd0000000000007b617b5b02d701a70000000000000000000000000193";
-
+d="67671200432e865b0c2cbf03fd78853dfafdb118039e000000000002d4000355fb00000eb435047f16ff05f20000000000009188918202d701a7000000000000000000000000019e";
 var data=new Buffer(d,'hex');
 
 var jsonValues = eelinkParser(data);
@@ -29,6 +32,8 @@ var jsonValues = eelinkParser(data);
 console.log("jsonValues");
 console.log(JSON.stringify(jsonValues));
 console.log("");
+
+
 
 
 var jsonToTransmit = {}
@@ -66,6 +71,37 @@ if(jsonValues.ain0!=undefined){
 if(jsonValues.ain1!=undefined){
     jsonToTransmit.ain1 = parseInt(jsonValues.ain1, 16);
 }
+
+
+if(jsonValues.status!=undefined){
+    var mask="00000000" + parseInt("0x" + jsonValues.status.toString('hex'),16).toString(2);
+    function maskBit(b){
+        return mask.charAt(mask.length-(1+b))==1;
+    }
+
+    status={
+    gpsfixed:maskBit(0),
+    cardsgnd:maskBit(1),
+    enginfired:maskBit(2),
+    accelersup:maskBit(3),
+    motionwarn:maskBit(4),
+    rlycontrol:maskBit(5),
+    rlytrigg:maskBit(6),
+    extchrsup:maskBit(7),
+    charging:maskBit(8),
+    active:maskBit(9),
+    gpsrunning:maskBit(10),
+    obdrunning:maskBit(11),
+    din0:maskBit(12),
+    din1:maskBit(13),
+    din2:maskBit(14),
+    din3:maskBit(15)}
+    jsonToTransmit.status=status;
+}
+
+
+
+
 
 //NOT DOCUMENTED IN PROTOCOL
 if(jsonValues.tempnodoc!=undefined){
