@@ -67,8 +67,7 @@ bridgeServer.on("targuetData",(data)=>{
     if(jsonValues.course!=undefined){jsonToTransmit.course = parseInt(jsonValues.course, 16);}
     if(jsonValues.satellites!=undefined){jsonToTransmit.satellites = parseInt(jsonValues.satellites);}
     if(jsonValues.battery!=undefined){jsonToTransmit.battery = parseInt(jsonValues.battery, 16)/1000;}
-    if(jsonValues.temperature!=undefined){jsonToTransmit.temperature = parseInt(jsonValues.temperature, 16)/256;}
-    if(jsonValues.ain0!=undefined){jsonToTransmit.ain0 = parseInt(jsonValues.ain0, 16);}
+        if(jsonValues.ain0!=undefined){jsonToTransmit.ain0 = parseInt(jsonValues.ain0, 16);}
     if(jsonValues.ain1!=undefined){jsonToTransmit.ain1 = parseInt(jsonValues.ain1, 16);}
 
     if(jsonValues.status!=undefined){
@@ -80,7 +79,10 @@ bridgeServer.on("targuetData",(data)=>{
       status={
         gpsfixed:maskBit(0),
         cardsgnd:maskBit(1),
-        enginfired:maskBit(2),
+        //Bit 2 originaly used to detect engine on/off
+        //enginfired:maskBit(2),
+        //Bit 2 heare instead is used with door sensor to detect closed/open door
+        door:maskBit(2),
         accelersup:maskBit(3),
         motionwarn:maskBit(4),
         rlycontrol:maskBit(5),
@@ -101,7 +103,9 @@ bridgeServer.on("targuetData",(data)=>{
 
 
     //NOT DOCUMENTED IN PROTOCOL
-      if(jsonValues.tempnodoc!=undefined){jsonToTransmit.tempnodoc = parseInt(jsonValues.tempnodoc, 16)/16;}
+    //temperature originaly documented as
+        //if(jsonValues.temperature!=undefined){jsonToTransmit.temperature = parseInt(jsonValues.temperature, 16)/256;}
+    if(jsonValues.tempnodoc!=undefined){jsonToTransmit.temperature = parseInt(jsonValues.tempnodoc, 16)/16;}
     konker.publishToKonker(jsonToTransmit,"data")
   }
 
