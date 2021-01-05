@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "description": "Bridge for GPS tracker to Konker platform ",
   "dependencies": {
-    "axios": "0.17.1",
+    "axios": "0.21.1",
     "dotenv": "4.0.0",
     "mqtt": "^2.15.1",
     "public-ip": "^2.4.0",
